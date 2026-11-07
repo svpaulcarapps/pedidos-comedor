@@ -1,5 +1,5 @@
 // La interfaz y los datos siguen viviendo exclusivamente en Apps Script.
-const SCRIPT_URL='https://script.google.com/a/macros/svpaulcar.es/s/AKfycbxm6lOf_bWTRGf_hx16lc2xtFu69KvtJKW3vJsIsKtwiASIogrtKHvqt0tYsakjg-mI/exec';
+const SCRIPT_URL='https://script.google.com/a/macros/svpaulcar.es/s/AKfycbxm6lOf_bWTRGf_hx16lc2xtFu69KvtJKW3vJsIsKtwiASIogrtKHvqt0tYsakjg-mI/exec?v=30';
 const nonce=crypto.randomUUID(),frame=document.querySelector('#app'),dialog=document.querySelector('#pushDialog'),confirm=document.querySelector('#pushConfirm'),error=document.querySelector('#pushError');
 let appOrigin=null,appWindow=null,pending=null,registration=null,busy=false,loginOpened=false;
 const start=new URLSearchParams(location.search).get('view')==='comedor'?'comedor':'';
