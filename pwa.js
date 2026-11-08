@@ -1,5 +1,5 @@
 // La interfaz y los datos siguen viviendo exclusivamente en Apps Script.
-const SCRIPT_URL='https://script.google.com/a/macros/svpaulcar.es/s/AKfycbxm6lOf_bWTRGf_hx16lc2xtFu69KvtJKW3vJsIsKtwiASIogrtKHvqt0tYsakjg-mI/exec?v=30';
+const SCRIPT_URL='https://script.google.com/a/macros/svpaulcar.es/s/AKfycbxm6lOf_bWTRGf_hx16lc2xtFu69KvtJKW3vJsIsKtwiASIogrtKHvqt0tYsakjg-mI/exec?v=33';
 const nonce=crypto.randomUUID(),frame=document.querySelector('#app'),dialog=document.querySelector('#pushDialog'),confirm=document.querySelector('#pushConfirm'),error=document.querySelector('#pushError');
 let appOrigin=null,appWindow=null,pending=null,registration=null,busy=false,loginOpened=false;
 const start=new URLSearchParams(location.search).get('view')==='comedor'?'comedor':'';
@@ -19,7 +19,7 @@ window.addEventListener('message',async event=>{
  if(m.type==='ready'){appWindow=event.source;appOrigin=event.origin;document.querySelector('#loading').hidden=true;document.querySelector('#loading').style.display='none';return;}
  if(event.source!==appWindow)return;
  if(['session-load','session-save','session-clear'].includes(m.type)){
-  const key='svpaulcar-comedor-sesion-v1';try{let session=null;if(m.type==='session-save'){const s=m.session;if(!s||!/^r_[0-9a-f-]{72}$/i.test(s.token)||!Number.isFinite(s.expires)||s.expires<=Date.now()||s.expires>Date.now()+31*86400000)throw Error('Sesión no válida.');localStorage.setItem(key,JSON.stringify({token:s.token,expires:s.expires}));}if(m.type==='session-clear')localStorage.removeItem(key);if(m.type==='session-load'){session=JSON.parse(localStorage.getItem(key)||'null');if(session&&session.expires<=Date.now()){localStorage.removeItem(key);session=null;}}send('session-result',{requestId:m.requestId,ok:true,session});}catch(e){send('session-result',{requestId:m.requestId,ok:false});}return;
+  const key='svpaulcar-comedor-sesion-v1';try{let session=null;if(m.type==='session-save'){const s=m.session;if(!s||!/^r_[0-9a-f-]{72}$/i.test(s.token)||!Number.isFinite(s.expires)||s.expires<=Date.now()||s.expires>Date.now()+31*86400000)throw Error('Sesión no válida.');localStorage.setItem(key,JSON.stringify({token:s.token,expires:s.expires,vista:['Admin','Producto','Profes','Menu','ConsultaMenu','AlumnosComedor'].includes(s.vista)?s.vista:'Admin',personalVista:s.personalVista==='estadisticas'?'estadisticas':'operativa'}));}if(m.type==='session-clear')localStorage.removeItem(key);if(m.type==='session-load'){session=JSON.parse(localStorage.getItem(key)||'null');if(session&&session.expires<=Date.now()){localStorage.removeItem(key);session=null;}}send('session-result',{requestId:m.requestId,ok:true,session});}catch(e){send('session-result',{requestId:m.requestId,ok:false});}return;
  }
  if(m.type==='status'){try{supported();const r=await ready,sub=await r.pushManager.getSubscription();send('status-result',{active:!!sub,permission:Notification.permission});}catch(e){send('status-result',{active:false,message:e.message});}return;}
  if(m.type==='activate'||m.type==='deactivate'){
