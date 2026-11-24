@@ -244,7 +244,7 @@ function cargarCensoMenu(){
   censoMenu={alumnos:result.alumnos.map(a=>({...a,busqueda:normalizaNombreMenu(a.nombre+' '+a.clase)}))};
   $('profesMenu').replaceChildren(...result.profesores.map(n=>new Option(n,n)));
   sincronizarMenuRapido();
- }).catch(e=>{if(token===comedorToken&&String(e.message||e).includes('contraseña de Comedor')){fail(e);sincronizarMenuRapido();return;}if(token===comedorToken)$('estadoCensoMenu').textContent='No se pudo cargar el listado. Usa la entrada manual o vuelve a abrir Menús diarios.';})
+ }).catch(e=>{if(token===comedorToken&&String(e.message||e).includes('contraseña de Comedor')){fail(e);sincronizarMenuRapido();return;}if(token===comedorToken)$('estadoCensoMenu').textContent='No se pudo cargar el listado. '+String(e.message||e).slice(0,180)+' Puedes escribir el nombre a mano.';})
  .finally(()=>{if(token===tokenCensoMenu)peticionCensoMenu=null;});
 }
 function sincronizarMenuRapido(){
