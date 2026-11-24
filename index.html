@@ -222,7 +222,7 @@ let coincidenciasMenu=[], volverAlListadoMenu=false;
 const tandaMenu=[];
 const normalizaNombreMenu=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('es').trim();
 const esMenuAlumno=()=>mode==='Menu'&&$('target').value==='Clase';
-const registroRapido=()=>esMenuAlumno()&&data?.lotesMenu&&!!comedorToken;
+const registroRapido=()=>esMenuAlumno()&&!!comedorToken&&(data?.lotesMenu||!!censoMenu);
 function pintarBusquedaMenu(){
  const palabras=normalizaNombreMenu(buscadorMenu.value).split(/\s+/).filter(Boolean);
  coincidenciasMenu=(censoMenu?.alumnos||[]).filter(a=>a.clase===$('className').value&&palabras.every(w=>a.busqueda.includes(w))).slice(0,palabras.length?25:100);
@@ -234,7 +234,7 @@ function pintarBusquedaMenu(){
 }
 function cargarCensoMenu(){
  const token=comedorToken;
- if(!token||!data?.lotesMenu)return;
+ if(!token)return;
  if(token===tokenCensoMenu&&(censoMenu||peticionCensoMenu))return;
  tokenCensoMenu=token;
  censoMenu=null;
@@ -243,19 +243,19 @@ function cargarCensoMenu(){
   if(token!==comedorToken)return;
   censoMenu={alumnos:result.alumnos.map(a=>({...a,busqueda:normalizaNombreMenu(a.nombre+' '+a.clase)}))};
   $('profesMenu').replaceChildren(...result.profesores.map(n=>new Option(n,n)));
-  pintarBusquedaMenu();
+  sincronizarMenuRapido();
  }).catch(e=>{if(token===comedorToken&&String(e.message||e).includes('contraseña de Comedor')){fail(e);sincronizarMenuRapido();return;}if(token===comedorToken)$('estadoCensoMenu').textContent='No se pudo cargar el listado. Usa la entrada manual o vuelve a abrir Menús diarios.';})
  .finally(()=>{if(token===tokenCensoMenu)peticionCensoMenu=null;});
 }
 function sincronizarMenuRapido(){
  const rapido=registroRapido();
  $('zonaMenuRapido').classList.toggle('hidden',!esMenuAlumno());
- $('estadoCensoMenu').hidden=!rapido;
+ $('estadoCensoMenu').hidden=!esMenuAlumno()||!comedorToken;
  $('accesoListadoMenu').classList.toggle('hidden',!esMenuAlumno()||!!comedorToken||!(/^(Infantil|Primaria) /.test($('className').value)));
  $('student').required=esMenuAlumno()&&!rapido;
  $('classLabel').classList.toggle('hidden',$('target').value!=='Clase');
  $('save').textContent=rapido?'Añadir a la tanda':'✓ Registrar pedido';
- if(rapido||$('target').value==='Profesor')cargarCensoMenu();
+ if((esMenuAlumno()||$('target').value==='Profesor')&&comedorToken)cargarCensoMenu();
  pintarBusquedaMenu();
  pintarTandaMenu();
 }
