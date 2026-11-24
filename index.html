@@ -239,7 +239,7 @@ function cargarCensoMenu(){
  tokenCensoMenu=token;
  censoMenu=null;
  $('estadoCensoMenu').textContent='Cargando nombres…';
- peticionCensoMenu=api('alumnadoMenuRapido',token).then(result=>{
+ peticionCensoMenu=api('inicial',{censoMenus:true,token}).then(result=>{
   if(token!==comedorToken)return;
   censoMenu={alumnos:result.alumnos.map(a=>({...a,busqueda:normalizaNombreMenu(a.nombre+' '+a.clase)}))};
   $('profesMenu').replaceChildren(...result.profesores.map(n=>new Option(n,n)));
@@ -319,7 +319,7 @@ $('guardarTandaMenu').onclick=async()=>{
  pintarTandaMenu();
  pintarBusquedaMenu();
  try{
-  const result=await api('guardarMenusAlumnosRapido',tandaMenu,comedorToken);
+  const result=await api('guardarPedido',{menusAlumnos:tandaMenu,token:comedorToken});
   const ids=new Set(result.map(r=>r.id));
   for(let i=tandaMenu.length-1;i>=0;i--)if(ids.has(tandaMenu[i].id))tandaMenu.splice(i,1);
   const duplicados=result.filter(r=>r.estado==='duplicado').length;
